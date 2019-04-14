@@ -3,6 +3,7 @@
 
 import json
 import yaml
+from dynamodb_cloud_formation.cloud_formation_fn_resolver import CloudFormationFnResolver
 from dynamodb_cloud_formation.dynamodb_resource_parser import DynamoDbResourceParser
 
 
@@ -28,7 +29,11 @@ class CloudFormationParser:
         try:
             cloud_formation_json = self.load_yaml(file_name)
         except yaml.scanner.ScannerError:
+            print 'WARNING: Couldn\t parse file as YAML, falling back to JSON'
             cloud_formation_json = self.load_json(file_name)
+
+        resolver = CloudFormationFnResolver()
+        cloud_formation_json = resolver.resolve(cloud_formation_json)
 
         resources = cloud_formation_json['Resources']
 
