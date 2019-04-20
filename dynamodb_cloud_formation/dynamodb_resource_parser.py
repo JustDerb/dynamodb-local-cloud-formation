@@ -74,12 +74,22 @@ class DynamoDbResourceParser:
 		else:
 			return ""
 
+
+	def billingMode(self):
+		if 'BillingMode' in self.json['Properties']:
+			billingMode = self.json['Properties']['BillingMode']
+			return " --billing-mode " + billingMode
+		else:
+			return ""
+
+
 	def toCLI(self, region, endpoint_url):
 		return 	''.join(('aws dynamodb create-table --region ',
 				region,
 				' --endpoint-url ',
 				endpoint_url,
 				self.tableName(),
+				self.billingMode(),
 				self.attributeDefinitions(), 
 				self.keySchema(),
 				self.localSecondaryIndexes(), 
